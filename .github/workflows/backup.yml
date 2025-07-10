@@ -28,3 +28,9 @@ jobs:
 
       - name: Run backup script
         run: python backup_config.py # 스크립트 이름 정확히 기재해야함.
+
+      - name: Upload config backup file as artifact # 아티팩트 액션을 이용해 config를 깃허브에 백업한다.
+        uses: actions/upload-artifact@v4
+        with:
+          name: switch-backup
+          path: backups/
