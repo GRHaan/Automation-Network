@@ -1,6 +1,9 @@
 name: backup # show run으로 시스코 config 백업
 
 on:
+
+  workflow_dispatch:
+
   push:
     branches:
       - main
@@ -8,6 +11,11 @@ on:
 jobs:
   backup:
     runs-on: [ self-hosted, linux ] # 별도의 서버의 리눅스 환경에서만 동작하게끔 설정
+
+    env:
+      DEVICE_USERNAME: ${{ secrets.DEVICE_USERNAME }}
+      DEVICE_PASSWORD: ${{ secrets.DEVICE_PASSWORD }}
+      DEVICE_SECRET: ${{ secrets.DEVICE_SECRET }}
 
     steps:
       - name: Checkout repository # 해당 스텝이 없다면 러너에게 job을 전달 할 수 없음.
@@ -19,12 +27,11 @@ jobs:
           python-version: '3.10'
       
       - name: Install netmiko and paramiko
-        # 러너(리눅스 서버)에게 run 동작으로 netmiko를 설치하게한다.
+        # 러너(리눅스 서버)에게 run 동작으로 netmiko와 pyyaml을 설치하게한다.
         # 보통 pip install은 이미 설치되었다면 패키지를 덮어쓰거나 스킵하지만 그럼에도 매번 설치하는 의존성을 줄이려면?
         run: |
           python -c "import netmiko" 2>/dev/null || pip install netmiko
-          python -c "import paramiko" 2>/dev/null || pip install paramiko
-
+          python -c "import yaml" 2>/dev/null || pip install pyyaml
 
       - name: Run backup script
         run: python backup_config.py # 스크립트 이름 정확히 기재해야함.
