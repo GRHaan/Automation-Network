@@ -10,7 +10,7 @@ jobs:
     runs-on: [ self-hosted, linux ] # 별도의 서버의 리눅스 환경에서만 동작하게끔 설정
 
     steps:
-      - name: Checkout repository # 해당 스텝이 없다면 러너에게 job을 전달 할 수 없음.
+      - name: Checkout repository # 해당 스텝이 없다면 워크플로우가 진행중인 repository에서 러너에게 코드를 전달 할 수 없음.
         uses: actions/checkout@v4
 
       - name: Set up Python
