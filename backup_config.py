@@ -8,9 +8,9 @@ import os
 import sys
 import yaml
 
-User = os.getenv("DEVICE_USERNAME")
-Password = os.getenv("DEVICE_PASSWORD")
-Secret = os.getenv("DEVICE_SECRET")
+USERNAME = os.getenv("DEVICE_USERNAME")
+PASSWORD = os.getenv("DEVICE_PASSWORD")
+SECRET = os.getenv("DEVICE_SECRET")
 
 def load_device(yaml_path='device.yaml'):
     with open(yaml_path, "r") as file:
