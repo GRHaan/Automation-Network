@@ -1,5 +1,7 @@
 - host: 192.168.1.10
+  name: cisco_1
   device_type: cisco_ios
 
 - host: 192.168.1.20
+  name: cisco_2
   device_type: cisco_ios

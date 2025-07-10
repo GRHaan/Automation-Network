@@ -1,0 +1,3 @@
+- host: 192.168.1.30
+  name: handreamnet_1
+  device_type: cisco_ios

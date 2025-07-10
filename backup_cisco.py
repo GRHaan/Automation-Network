@@ -1,30 +1,32 @@
 """
-네트워크 자동화를 위한 시스코 'show run' 명령어를 자동으로 백업하는 파이프라인 구축"
+네트워크 자동화를 위한 시스코 'show run' 명령어를 자동으로 백업하는 파이프라인 구축
 """
 
 from netmiko import ConnectHandler
 from datetime import datetime
 import os
-import sys
 import yaml
 
 USERNAME = os.getenv("DEVICE_USERNAME")
 PASSWORD = os.getenv("DEVICE_PASSWORD")
 SECRET = os.getenv("DEVICE_SECRET")
+COMMAND = os.getenv("DEVICE_COMMAND", "show running-config")
 
 def load_device(yaml_path='device.yaml'):
     with open(yaml_path, "r") as file:
         return yaml.safe_load(file)
-    
-def save_to_config (ip, config):
+
+def save_to_file(device, config_text):
+    name = device.get("name", device["host"])
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"backup_{ip}_{timestamp}.txt"
-    os.makedirs("backups", exist_ok = True)
-    filepath = os.path.join("backups", filename)
+    folder = "backups/cisco"
+    os.makedirs(folder, exist_ok=True)
+    filename = f"backup_{name}_{timestamp}.txt"
+    filepath = os.path.join(folder, filename)
 
     with open(filepath, "w") as f:
         f.write(config_text)
-    
+
     print(f"백업 저장 완료: {filepath}")
 
 def backup_device(device):
@@ -41,14 +43,14 @@ def backup_device(device):
     try:
         net_connect = ConnectHandler(**conn_info)
         net_connect.enable()
-        output = net_connect.send_command("show running-config")
+        output = net_connect.send_command(COMMAND)
         net_connect.disconnect()
-        save_to_file(device["host"], output)
+        save_to_file(device, output)
 
     except Exception as e:
-        print(f"{device["host"]} 백업 실패: {e}")
+        print(f"{device['host']} 백업 실패: {e}")
         return False
-    
+
     return True
 
 def main():

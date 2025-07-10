@@ -1,0 +1,37 @@
+name: handreamnet_backup  # 한드림넷 스위치 config 백업
+
+on:
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: [self-hosted, linux] 
+
+    env:
+      DEVICE_USERNAME: ${{ secrets.HANDREAMNET_USERNAME }}
+      DEVICE_PASSWORD: ${{ secrets.HANDREAMNET_PASSWORD }}
+      DEVICE_SECRET: ${{ secrets.HANDREAMNET_SECRET }} 
+      DEVICE_COMMAND: ${{ secrets.HANDREAMNET_COMMAND }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install netmiko and pyyaml
+        run: |
+          python -c "import netmiko" 2>/dev/null || pip install netmiko
+          python -c "import yaml" 2>/dev/null || pip install pyyaml
+
+      - name: Run Handreamnet backup script
+        run: python backup_handreamnet.py
+
+      - name: Upload Handreamnet backup artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: handreamnet-backup
+          path: backups/handreamnet/

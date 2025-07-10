@@ -1,12 +1,8 @@
-name: backup # show run으로 시스코 config 백업
+name: cisco_backup # show run으로 시스코 config 백업
 
 on:
 
   workflow_dispatch:
-
-  push:
-    branches:
-      - main
 
 jobs:
   backup:
@@ -18,7 +14,7 @@ jobs:
       DEVICE_SECRET: ${{ secrets.DEVICE_SECRET }}
 
     steps:
-      - name: Checkout repository # 해당 스텝이 없다면 러너에게 job을 전달 할 수 없음.
+      - name: Checkout repository # 해당 스텝이 없다면 러너에게 job을 전달 할 수 없음. 반드시 필요함
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -34,10 +30,10 @@ jobs:
           python -c "import yaml" 2>/dev/null || pip install pyyaml
 
       - name: Run backup script
-        run: python backup_config.py # 스크립트 이름 정확히 기재해야함.
+        run: python backup_cisco.py # 스크립트 이름 정확히 기재해야함.
 
       - name: Upload config backup file as artifact # 아티팩트 액션을 이용해 config를 깃허브에 백업한다.
         uses: actions/upload-artifact@v4
         with:
-          name: switch-backup
-          path: backups/
+          name: cisco-backup
+          path: backups/cisco/
